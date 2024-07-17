@@ -1,5 +1,5 @@
 import os
-from dotenv import find_dotenv, dotenv_values
+from dotenv import dotenv_values
 
 env = dotenv_values(os.getcwd() + '/common/global_configs/prod.env')
 print(os.getcwd() + '/common/global_configs/prod.env')

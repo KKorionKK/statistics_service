@@ -4,6 +4,7 @@ from redis.asyncio.client import Pipeline
 from app.common import settings as s
 from jsonrpcserver import JsonRpcError
 
+
 class RedisController:
     def __init__(self):
         self.redis = redis.Redis(
@@ -27,10 +28,10 @@ class RedisController:
         return res
 
     async def get_statistic(self, name: str):
-        if self.if_statistic_exist(name):
+        if await self.if_statistic_exist(name):
             return await self.__get_statistic(name)
         else:
-            raise JsonRpcError(400, f'Statistics with name "{name}" has not initialized yet.')
+            raise JsonRpcError(400, f'Statistics with name "{name}" have not initialized yet.')
 
     async def init_statistics(self, names: list[str]):
         errors: list[str] = []
@@ -41,14 +42,14 @@ class RedisController:
                 continue
             pipeline.set(name, 0)
         if errors:
-            raise JsonRpcError(400, f'The following statistics already initialized: {errors}. Operation cancelled.')
+            raise JsonRpcError(400, f'The following statistics have already been initialized: {errors}. Operation cancelled.')
         await pipeline.execute(True)
 
     async def increment_statistic(self, name: str, value: int):
         if await self.if_statistic_exist(name):
             await self.redis.incr(name, value)
         else:
-            raise JsonRpcError(400, f'Statistics with name "{name}" has not initialized yet. Operation cancelled.')
+            raise JsonRpcError(400, f'Statistics with name "{name}" have not initialized yet. Operation cancelled.')
         return await self.__get_statistic(name)
 
 
